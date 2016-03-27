@@ -3,6 +3,12 @@
     package="keysona.com.movie">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <supports-screens
+        android:smallScreens="true"
+        android:normalScreens="true"
+        android:largeScreens="true"
+        android:resizeable="true"
+        android:anyDensity="true"/>
 
     <application
         android:name=".MyApplication"

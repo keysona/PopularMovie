@@ -24,6 +24,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private Context mContext;
 
+    private String posterSize;
+
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -33,23 +35,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, int position) {
+    public void onBindViewHolder(MovieViewHolder holder, final int position) {
         final Movie movie = movies.get(position);
-        String imageUrl = movie.buildImageUrl();
+        String imageUrl = movie.buildImageUrl(posterSize);
         Picasso.with(mContext).load(imageUrl).into(holder.imageView);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, DetailActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, posterSize);
                 intent.putExtra("movie", movie);
                 mContext.startActivity(intent);
             }
         });
     }
 
-    public MovieAdapter(Context context, List<Movie> movies) {
+    public MovieAdapter(Context context, String posterSize, List<Movie> movies) {
         this.movies = movies;
         this.mContext = context;
+        this.posterSize = posterSize;
     }
 
     @Override
