@@ -1,7 +1,7 @@
 # PopularMovie
 
 ## API KEY location
-You can add your API KEY in **keysona.com.movie.data.Config** class.
+Add your API key in gradle.gradle<app> defaultConfig "TMDB_API_KEY"
 
 ## State 1
 **Finish**
