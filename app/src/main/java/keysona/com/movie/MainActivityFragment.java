@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,9 +16,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +35,7 @@ public class MainActivityFragment extends Fragment {
 
     private ArrayList<Movie> movies = new ArrayList<Movie>();
 
-    private ArrayAdapter<Movie> movieArrayAdapter;
+    private MovieAdapter movieAdapter;
 
     private static String TAG = "MainActivityFragment";
 
@@ -55,21 +54,16 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        movieArrayAdapter = new MovieAdapter(getActivity(), R.layout.thumb_view, movies);
+        movieAdapter = new MovieAdapter(getActivity(), movies);
 
-        GridView gridView = (GridView) view.findViewById(R.id.grid_view);
-        Log.d("Test", gridView == null ? "null" : "object");
-        gridView.setAdapter(movieArrayAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Movie movie = movies.get(position);
-                Log.d(TAG, movie.toString());
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("movie", movie);
-                startActivity(intent);
-            }
-        });
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),3);
+
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(movieAdapter);
+        Log.d("Test", recyclerView == null ? "null" : "object");
         return view;
     }
 
@@ -93,7 +87,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            movieArrayAdapter.notifyDataSetChanged();
+            movieAdapter.notifyDataSetChanged();
         }
 
         @Override
