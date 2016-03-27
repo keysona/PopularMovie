@@ -107,17 +107,17 @@ public class Movie implements Parcelable {
         voteCount = in.readInt();
     }
 
-    public String buildImageUrl(){
+    public String buildImageUrl(String posterSize) {
         String url = new Uri.Builder()
                 .scheme("http")
                 .authority(Config.POSTER_URL)
                 .appendPath("t")
                 .appendPath("p")
-                .appendPath(Config.POSTER_SIZE_PHONE)
+                .appendPath(posterSize)
                 .appendEncodedPath(posterPath)
                 .build().toString();
-        Timber.tag("Movie adapter").d("poster path : %s",posterPath);
-        Timber.tag("Movie adapter").d("poster url : %s",url);
+        Timber.tag("Movie adapter").d("poster path : %s", posterPath);
+        Timber.tag("Movie adapter").d("poster url : %s", url);
         return url;
     }
 }
