@@ -30,6 +30,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'org.json:json:20140107'
     compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.jakewharton.timber:timber:4.1.1'
 }
 
 repositories {

@@ -1,12 +1,11 @@
 package keysona.com.movie.net;
 
-import android.util.Log;
-
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import timber.log.Timber;
 
 /**
  * Created by key on 16-3-25.
@@ -32,10 +31,10 @@ public class NetworkConnector {
         try {
             String data = run(url);
             data = (data != null) ? data : "";
-            Log.d("Test", data);
+            Timber.tag("net").d(data);
             return data;
         } catch (Exception e) {
-            Log.d("Test", e.toString());
+            Timber.tag("net").d(e.toString());
         }
         return "";
     }

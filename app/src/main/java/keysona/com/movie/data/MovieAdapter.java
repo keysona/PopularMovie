@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import keysona.com.movie.DetailActivity;
+import keysona.com.movie.ui.DetailActivity;
 import keysona.com.movie.R;
 
 /**

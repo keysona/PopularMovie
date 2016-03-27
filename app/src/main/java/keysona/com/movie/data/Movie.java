@@ -3,10 +3,11 @@ package keysona.com.movie.data;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import timber.log.Timber;
 
 /**
  * Created by key on 16-3-25.
@@ -57,7 +58,6 @@ public class Movie implements Parcelable {
             movie.originalTitle = object.getString("original_title");
             movie.releaseDate = object.getString("release_date");
             movie.voteCount = object.getInt("vote_count");
-            Log.d("Test", movie.toString() + "vote_count: " + movie.voteCount);
             return movie;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -116,8 +116,8 @@ public class Movie implements Parcelable {
                 .appendPath(Config.POSTER_SIZE_PHONE)
                 .appendEncodedPath(posterPath)
                 .build().toString();
-        Log.d("Test - poster-path:",posterPath);
-        Log.d("Test - Image Url : ", url);
+        Timber.tag("Movie adapter").d("poster path : %s",posterPath);
+        Timber.tag("Movie adapter").d("poster url : %s",url);
         return url;
     }
 }
