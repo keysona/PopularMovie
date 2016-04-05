@@ -2,8 +2,6 @@ package keysona.com.movie.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -17,17 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 import keysona.com.movie.R;
 import keysona.com.movie.data.Config;
 import keysona.com.movie.data.Movie;
 import keysona.com.movie.data.MovieAdapter;
-import keysona.com.movie.net.NetworkConnector;
+import keysona.com.movie.net.FetchMoviesListTask;
 import timber.log.Timber;
 
 /**
@@ -35,9 +29,9 @@ import timber.log.Timber;
  */
 public class MainActivityFragment extends Fragment {
 
-    private ArrayList<Movie> movies = new ArrayList<Movie>();
+    public static ArrayList<Movie> movies = new ArrayList<Movie>();
 
-    private MovieAdapter movieAdapter;
+    public static  MovieAdapter movieAdapter;
 
     private static final String POSTER_SIZE = "poster_size";
 
@@ -53,7 +47,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new FetchPopularMoviesTsk().execute();
+        new FetchMoviesListTask(getActivity()).execute();
         setHasOptionsMenu(true);
 
         // According to screen size,determine span count of GridLayoutManager.
@@ -106,65 +100,6 @@ public class MainActivityFragment extends Fragment {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    class FetchPopularMoviesTsk extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            movieAdapter.notifyDataSetChanged();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //constuct popular movie url
-            String url = getMoviesUrl(getMovieSortType());
-            String jsonData = NetworkConnector.get(url);
-            getMoviesFromJsons(jsonData);
-            return null;
-        }
-
-        private String getMoviesUrl(String sortType) {
-
-            /*
-            * example : http://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]
-            * */
-            String url = new Uri.Builder()
-                    .scheme("http")
-                    .authority(Config.MOVIE_WEBSITE)
-                    .appendPath("3")
-                    .appendPath("movie")
-                    .appendPath(sortType)
-                    .appendQueryParameter("api_key", Config.API_KEY)
-                    .build().toString();
-            Timber.tag(TAG).d("movie url : " + url);
-            return url;
-
-        }
-
-        private void getMoviesFromJsons(String data) {
-            try {
-                JSONObject temp = new JSONObject(data);
-                JSONArray moviesJson = temp.getJSONArray("results");
-                for (int i = 0; i < moviesJson.length(); i++) {
-                    JSONObject movieJson = moviesJson.getJSONObject(i);
-                    movies.add(Movie.fromJson(movieJson));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private String getMovieSortType() {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String sortType = sharedPreferences.getString(getString(R.string.pref_sort_key)
-                    , getString(R.string.pref_sort_default));
-
-            Timber.tag(TAG).d("movie sort type : " + sortType);
-            return sortType;
-        }
     }
 
     private DisplayMetrics getDisplayMetric() {

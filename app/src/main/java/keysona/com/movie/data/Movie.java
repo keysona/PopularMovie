@@ -20,6 +20,7 @@ public class Movie implements Parcelable {
     private String releaseDate;
     private String originalTitle;
     private int voteCount;
+    private int like;   // 0 is dislike , 1 is like
 
     public Movie() {
 
@@ -97,6 +98,10 @@ public class Movie implements Parcelable {
                     return new Movie(source);
                 }
             };
+
+    public int getLike() {
+        return like;
+    }
 
     private Movie(Parcel in) {
         id = in.readInt();

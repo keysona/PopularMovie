@@ -50,4 +50,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/middle"/>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@+id/overview"
+        style="@style/Divider"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    </android.support.v7.widget.RecyclerView>
+
+
 </RelativeLayout>
