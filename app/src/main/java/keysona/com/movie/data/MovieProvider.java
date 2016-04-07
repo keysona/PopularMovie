@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 
+import timber.log.Timber;
+
 /**
  * Created by key on 16-4-5.
  */
@@ -47,7 +49,7 @@ public class MovieProvider extends ContentProvider {
         uriMatcher.addURI(authority, MovieContract.PATH_REVIEW, REVIEW);
         uriMatcher.addURI(authority, MovieContract.PATH_REVIEW + "/*", REVIEW_WITH_ID);
         uriMatcher.addURI(authority, MovieContract.PATH_VIDEO, VIDEO);
-        uriMatcher.addURI(authority, MovieContract.PATH_VIDEO + "/*", MOVIE_WITH_ID);
+        uriMatcher.addURI(authority, MovieContract.PATH_VIDEO + "/*", VIDEO_WITH_ID);
 
         return uriMatcher;
     }
@@ -91,8 +93,10 @@ public class MovieProvider extends ContentProvider {
                         selectionArgs,
                         null,
                         null,
-                        sortOrder
+                        sortOrder,
+                        "20"
                 );
+                Timber.d("retCursor : " + retCursor.getCount());
                 break;
 
             case MOVIE_WITH_ID:
@@ -125,7 +129,7 @@ public class MovieProvider extends ContentProvider {
 
             case VIDEO_WITH_ID:
                 movieId = ContentUris.parseId(uri);
-
+                Timber.d("keysona content provider VIDEO_WITH_ID : " + movieId);
                 retCursor = mOpenHelper.getWritableDatabase().query(
                         MovieContract.MovieVideoEntry.TABLE_NAME,
                         projection,
@@ -254,6 +258,7 @@ public class MovieProvider extends ContentProvider {
         int returnCount = 0;
         switch (match) {
             case MOVIE:
+                Timber.d("MovieInfo-bulkInsert");
                 returnCount = multiInsert(db, MovieContract.MovieInfoEntry.TABLE_NAME,values,uri);
                 break;
             case REVIEW:
@@ -273,7 +278,7 @@ public class MovieProvider extends ContentProvider {
         db.beginTransaction();
         try {
             for (ContentValues contentValues :values){
-                long _id = db.insert(MovieContract.MovieVideoEntry.TABLE_NAME,null,contentValues);
+                long _id = db.insert(tableName,null,contentValues);
                 if(_id!=-1)
                     returnCount++;
             }
@@ -282,6 +287,7 @@ public class MovieProvider extends ContentProvider {
             db.endTransaction();
         }
         getContext().getContentResolver().notifyChange(uri,null);
+        Timber.d("successful insert : " + returnCount);
         return returnCount;
     }
 

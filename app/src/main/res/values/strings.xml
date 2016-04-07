@@ -7,21 +7,30 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_sort_key" translatable="false">sort</string>
-    
+
     <string name="pref_sort_title">Sort</string>
-    
+
     <string name="pref_sort_default">popular</string>
 
     <string name="pref_sort_summary">sort by popular or top rated</string>
-    
+
+    <!-- DetailFragment -->
+    <string name="detail_title_overview">Overview</string>
+
+    <string name="detail_title_trailers">Trailers</string>
+
+    <string name="detail_title_review">Review</string>
+
     <array name="pref_sort_entries">
         <item>Popular</item>
         <item>Top Rated</item>
+        <item>Like</item>
     </array>
 
     <array name="pref_sort_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>like</item>
     </array>
 
 </resources>

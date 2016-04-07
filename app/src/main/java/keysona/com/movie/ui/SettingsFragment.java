@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 
 import keysona.com.movie.R;
 
+
 /**
  * Created by key on 16-3-26.
  */

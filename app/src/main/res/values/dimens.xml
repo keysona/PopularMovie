@@ -3,4 +3,21 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+
+    <!-- padding -->
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="padding_middle">8dp</dimen>
+    <dimen name="padding_small">4dp</dimen>
+
+    <!-- margin-->
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_middle">8dp</dimen>
+    <dimen name="margin_small">4dp</dimen>
+
+    <dimen name="detail_title">22sp</dimen>
+
+    <!-- cardview shadow-->
+    <dimen name="card_view_elevation">4dp</dimen>
 </resources>

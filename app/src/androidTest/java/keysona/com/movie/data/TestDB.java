@@ -144,7 +144,7 @@ public class TestDB extends AndroidTestCase{
                 null,
                 null);
 
-        assertTrue("Error: Movie Review Query Validation Failed", c.moveToFirst());
+        assertTrue("Error: MovieInfo Review Query Validation Failed", c.moveToFirst());
         TestUtility.validateCurrentRecord("Error: MovieReview Query Validation Failed\"", c, testValues);
         Timber.d("testMovieReview");
         c.close();
@@ -167,8 +167,8 @@ public class TestDB extends AndroidTestCase{
                 null,
                 null);
 
-        assertTrue("Error: Movie Video Query Validation Failed", c.moveToFirst());
-        TestUtility.validateCurrentRecord("Error : Movie Video  Validation Failed", c, testValues);
+        assertTrue("Error: MovieInfo Video Query Validation Failed", c.moveToFirst());
+        TestUtility.validateCurrentRecord("Error : MovieInfo Video  Validation Failed", c, testValues);
         Timber.d("testMovieVideoTable");
         c.close();
         db.close();

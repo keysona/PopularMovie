@@ -3,12 +3,13 @@
     package="keysona.com.movie">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <supports-screens
-        android:smallScreens="true"
-        android:normalScreens="true"
+        android:anyDensity="true"
         android:largeScreens="true"
+        android:normalScreens="true"
         android:resizeable="true"
-        android:anyDensity="true"/>
+        android:smallScreens="true" />
 
     <application
         android:name=".MyApplication"
@@ -28,19 +29,25 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.SettingActivity"
+            android:parentActivityName=".ui.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity" />
+        </activity>
+
+        <provider
+            android:name=".data.MovieProvider"
+            android:authorities="keysona.com.movie" />
+
+        <activity
             android:name=".ui.DetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
-        </activity>
-        <activity android:name=".ui.SettingActivity"
-            android:parentActivityName=".ui.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity"/>
+                android:value="keysona.com.movie.ui.MainActivity" />
         </activity>
     </application>
 

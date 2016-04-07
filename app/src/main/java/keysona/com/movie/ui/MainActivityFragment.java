@@ -1,10 +1,14 @@
 package keysona.com.movie.ui;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -17,21 +21,22 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import keysona.com.movie.Adapter.MovieAdapter;
 import keysona.com.movie.R;
 import keysona.com.movie.data.Config;
-import keysona.com.movie.data.Movie;
-import keysona.com.movie.data.MovieAdapter;
-import keysona.com.movie.net.FetchMoviesListTask;
+import keysona.com.movie.data.MovieContract;
+import keysona.com.movie.data.MovieInfo;
+import keysona.com.movie.net.FetchDataTask;
 import timber.log.Timber;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static ArrayList<Movie> movies = new ArrayList<Movie>();
+    public static MovieAdapter movieAdapter;
 
-    public static  MovieAdapter movieAdapter;
+    public static ArrayList<MovieInfo> movies;
 
     private static final String POSTER_SIZE = "poster_size";
 
@@ -41,13 +46,35 @@ public class MainActivityFragment extends Fragment {
 
     private static String TAG = "MainActivityFragment";
 
+    private static final int testMovieId = 118340;
+
+    private static final String SORT_TYPE = "sort";
+
+    private static final String SORT_TYPE_POPULAR = "popular";
+
+    private static final String SORT_TYPE_TOP_RATED = "top_rated";
+
+    private static final String SORT_TYPE_LIKE = "like";
+
+    private static final int LOADER_ID = 0;
+
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Bundle bundle = new Bundle();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sortType = pref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+        bundle.putString(SORT_TYPE,sortType);
+        getLoaderManager().initLoader(LOADER_ID, bundle, this);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new FetchMoviesListTask(getActivity()).execute();
+        new FetchDataTask(getContext()).execute(FetchDataTask.MOVIE_LIST);
         setHasOptionsMenu(true);
 
         // According to screen size,determine span count of GridLayoutManager.
@@ -79,8 +106,8 @@ public class MainActivityFragment extends Fragment {
         int spanCount = getSpanCount(posterSize, screenWidth);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         Timber.tag(TAG).d("spanCount : " + spanCount);
-
-        movieAdapter = new MovieAdapter(getActivity(), posterSize, movies);
+        movies = new ArrayList<MovieInfo>();
+        movieAdapter = new MovieAdapter(getContext(),movies,posterSize);
 
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(movieAdapter);
@@ -136,5 +163,54 @@ public class MainActivityFragment extends Fragment {
         return (int) (temp + 0.2);
     }
 
+    @Override
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        String sortType = args.getString(SORT_TYPE);
+
+        String sortOrder = null;
+
+        switch(sortType){
+            case SORT_TYPE_TOP_RATED:
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_VOTE_AVERAGE + " ASC";
+                break;
+            case SORT_TYPE_LIKE:
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_LIKE + " ASC";
+                break;
+            case SORT_TYPE_POPULAR:
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_POPULARITY + " ASC";
+                break;
+        }
+
+        return new CursorLoader(
+                getContext(),
+                MovieContract.MovieInfoEntry.CONTENT_URI,
+                FetchDataTask.COLS_MOVIE_INFO,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor data) {
+        movies.clear();
+        if(data == null)
+            return;
+        while(data.moveToNext()){
+            MovieInfo temp = MovieInfo.fromCursor(data);
+            temp.setPosterPath(temp.buildImageUrl(posterSize));
+            movies.add(temp);
+        }
+
+        Timber.d("movies List:" + movies.size());
+        Timber.d("movies Cursor data : " + data.getCount());
+        movieAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+        movies.clear();
+        movieAdapter.notifyDataSetChanged();
+    }
 }

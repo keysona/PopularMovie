@@ -31,7 +31,7 @@ public class NetworkConnector {
         try {
             String data = run(url);
             data = (data != null) ? data : "";
-            Timber.tag("net").d(data);
+            Timber.tag("net-get").d(data);
             return data;
         } catch (Exception e) {
             Timber.tag("net").d(e.toString());

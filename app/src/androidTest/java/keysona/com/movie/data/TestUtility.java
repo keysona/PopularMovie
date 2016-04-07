@@ -17,7 +17,7 @@ public class TestUtility extends AndroidTestCase {
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_MOVIE_ID, 135397);
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_ORIGINAL_TITLE, "Jurassic World");
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_OVERVIEW, "Twenty-two years after the events of Jurassic Park, Isla Nublar now features a fully functioning dinosaur theme park, Jurassic World, as originally envisioned by John Hammond.");
-        contentValues.put(MovieContract.MovieInfoEntry.COLUMN_LIKE, 1);
+//        contentValues.put(MovieContract.MovieInfoEntry.COLUMN_LIKE, 1);
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_POPULARITY, 2);
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_VOTE_AVERAGE, 8.2);
         contentValues.put(MovieContract.MovieInfoEntry.COLUMN_POSTER_PATH, "/uXZYawqUsChGSj54wcuBtEdUJbh.jpg");

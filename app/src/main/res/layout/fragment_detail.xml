@@ -1,67 +1,71 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ui.DetailActivityFragment"
-    tools:showIn="@layout/activity_detail">
+    android:padding="@dimen/padding_large">
 
-    <TextView
-        android:id="@+id/title"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:layout_alignParentTop="true"
-        android:textSize="40sp"/>
+        card_view:cardElevation="@dimen/card_view_elevation">
 
-    <RelativeLayout
-        android:id="@+id/middle"
-        android:layout_below="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/poster"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:paddingRight="10dp"
-            android:scaleType="centerCrop"/>
+            android:orientation="vertical"
+            android:padding="@dimen/padding_small">
+           <TextView
+               style="@style/DetailTitle"
+               android:text="@string/detail_title_overview"/>
+           <TextView
+               android:id="@+id/overview"
+               android:layout_width="match_parent"
+               android:paddingLeft="@dimen/padding_middle"
+               android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/poster"/>
-
-        <TextView
-            android:id="@+id/vote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/poster"
-            android:layout_below="@+id/date"/>
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/overview"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/middle"/>
+        card_view:cardElevation="@dimen/card_view_elevation"
+        android:layout_marginTop="@dimen/margin_large">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_small">
+            <TextView
+                style="@style/DetailTitle"
+                android:text="@string/detail_title_trailers"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/trailers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_below="@+id/overview"
-        style="@style/Divider"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/trailers"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        card_view:cardElevation="@dimen/card_view_elevation"
+        android:layout_marginTop="@dimen/margin_large">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/padding_small">
+            <TextView
+                style="@style/DetailTitle"
+                android:text="@string/detail_title_review"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/review"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 
-    </android.support.v7.widget.RecyclerView>
-
-
-</RelativeLayout>
+</LinearLayout>

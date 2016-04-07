@@ -31,7 +31,7 @@ public class Utility {
     }
 
     public static String getMovieVideoUrl(int id) {
-        String url = buildMovieInfoUrl(id,VIDEOS_INFO_MOVIE);
+        String url = buildMovieInfoUrl(id, VIDEOS_INFO_MOVIE);
         Timber.d("movie video url : " + url);
         return url;
     }
@@ -52,8 +52,19 @@ public class Utility {
                 .appendPath(type)
                 .appendQueryParameter("api_key", Config.API_KEY)
                 .build().toString();
-
     }
 
-
+    public static String buildImageUrl(String posterPath,String posterSize) {
+        String url = new Uri.Builder()
+                .scheme("http")
+                .authority(Config.POSTER_URL)
+                .appendPath("t")
+                .appendPath("p")
+                .appendPath(posterSize)
+                .appendEncodedPath(posterPath)
+                .build().toString();
+        Timber.tag("MovieInfo adapter").d("poster path : %s", posterPath);
+        Timber.tag("MovieInfo adapter").d("poster url : %s", url);
+        return url;
+    }
 }
