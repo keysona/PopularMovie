@@ -1,4 +1,4 @@
-package keysona.com.movie.Adapter;
+package keysona.com.movie.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,13 +24,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     private Context mContext;
 
-    private static String posterSize;
-
     private List<MovieInfo> movies;
 
-    public MovieAdapter(Context context, List<MovieInfo> movieInfoList, String posterSize) {
+    public MovieAdapter(Context context, List<MovieInfo> movieInfoList) {
         this.mContext = context;
-        this.posterSize = posterSize;
         this.movies = movieInfoList;
     }
 

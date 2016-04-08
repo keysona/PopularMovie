@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="keysona.com.movieInfo.ui.DetailActivity"
+    tools:context="keysona.com.movie.ui.DetailActivity"
     tools:showIn="@layout/activity_detail">
 
     <FrameLayout

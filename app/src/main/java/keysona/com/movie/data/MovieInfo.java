@@ -1,5 +1,6 @@
 package keysona.com.movie.data;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
@@ -66,6 +67,10 @@ public class MovieInfo implements Parcelable {
         return like;
     }
 
+    public void setLike(int like) {
+        this.like = like;
+    }
+
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
     }
@@ -84,6 +89,14 @@ public class MovieInfo implements Parcelable {
         movieInfo.popularity = cursor.getDouble(FetchDataTask.MOVIE_INFO_COL_POPULARITY);
         movieInfo.like = cursor.getInt(FetchDataTask.MOVIE_INFO_COL_LIKE);
         return movieInfo;
+    }
+
+    public ContentValues toContentValues(){
+        ContentValues values = new ContentValues();
+
+        values.put(MovieContract.MovieInfoEntry.COLUMN_LIKE,like);
+
+        return values;
     }
 
     @Override

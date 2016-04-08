@@ -20,6 +20,11 @@ public class MovieVideo implements Parcelable {
     private int size;
     private String type;
 
+    // 4 images
+    private static final int videoImage = 4;
+
+
+
     public MovieVideo(){
 
     }
@@ -114,5 +119,21 @@ public class MovieVideo implements Parcelable {
     @Override
     public String toString() {
         return "movie id : " + movie_id + "\t" + "video id : " + video_id;
+    }
+
+    public String buildVideoUrl(){
+
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("http://img.youtube.com/vi/");
+        stringBuilder.append(key);
+        stringBuilder.append("/");
+        stringBuilder.append(0);
+        stringBuilder.append(".jpg");
+
+        /**
+         *  example ： http://img.youtube.com/vi/<insert-youtube-video-id-here>/3.jpg
+         */
+
+        return stringBuilder.toString();
     }
 }

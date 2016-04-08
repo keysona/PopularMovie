@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import keysona.com.movie.Adapter.MovieAdapter;
+import keysona.com.movie.adapter.MovieAdapter;
 import keysona.com.movie.R;
 import keysona.com.movie.data.Config;
 import keysona.com.movie.data.MovieContract;
@@ -107,7 +107,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         Timber.tag(TAG).d("spanCount : " + spanCount);
         movies = new ArrayList<MovieInfo>();
-        movieAdapter = new MovieAdapter(getContext(),movies,posterSize);
+        movieAdapter = new MovieAdapter(getContext(),movies);
 
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(movieAdapter);

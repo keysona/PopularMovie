@@ -13,10 +13,19 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import keysona.com.movie.R;
+import keysona.com.movie.data.MovieContract;
 import keysona.com.movie.data.MovieInfo;
 
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements DetailFragment.saveLikeState {
+
+    private static final int LIKE = 1;
+
+    private static final int DISLIKE = 0;
+
+    private int like;
+
+    private MovieInfo movieInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,19 +34,21 @@ public class DetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                changeFab(fab,false);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         if (intent != null){
-            MovieInfo movieInfo = intent.getParcelableExtra("movie_info");
+            movieInfo = intent.getParcelableExtra("movie_info");
+            getSupportActionBar().setTitle(movieInfo.getOriginalTitle());
             ImageView posterImageView = (ImageView)findViewById(R.id.poster);
             Picasso.with(this).load(movieInfo.getPosterPath()).into(posterImageView);
             Bundle bundle = new Bundle();
@@ -48,6 +59,44 @@ public class DetailActivity extends AppCompatActivity {
                     .beginTransaction()
                     .replace(R.id.detail_fragment_container, ff)
                     .commit();
+            like = movieInfo.getLike();
+            changeFab(fab,true);
+        }
+    }
+
+    private void changeFab(final FloatingActionButton fab,boolean init){
+        if(init){
+            switch(like){
+                case LIKE:
+                    fab.setImageResource(R.drawable.like);
+                    break;
+                case DISLIKE:
+                    fab.setImageResource(R.drawable.dislike);
+                    break;
+            }
+            return;
+        }
+        switch(like){
+            case LIKE:
+                fab.setImageResource(R.drawable.dislike);
+                like = DISLIKE;
+                movieInfo.setLike(like);
+                break;
+            case DISLIKE:
+                fab.setImageResource(R.drawable.like);
+                like = LIKE;
+                movieInfo.setLike(like);
+                break;
+        }
+    }
+
+    @Override
+    public void saveLikeState() {
+        if(movieInfo != null){
+            getContentResolver().update(MovieContract.MovieInfoEntry.CONTENT_URI,
+                    movieInfo.toContentValues(),
+                    "movie_id = ?", new String[]{""+movieInfo.getMovieId()});
+            movieInfo.setLike(like);
         }
     }
 }

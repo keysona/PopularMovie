@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import keysona.com.movie.net.FetchDataTask;
+import timber.log.Timber;
 
 /**
  * Created by key on 16-4-7.
@@ -84,12 +85,12 @@ public class MovieReview implements Parcelable {
         movieReview.author = c.getString(FetchDataTask.MOVIE_REVIEW_AUTHOR);
         movieReview.content = c.getString(FetchDataTask.MOVIE_REVIEW_CONTENT);
         movieReview.url = c.getString(FetchDataTask.MOVIE_REVIEW_URL);
-
+        Timber.d("MovieReview fromCursor : " + c.getString(FetchDataTask.MOVIE_REVIEW_URL));
         return movieReview;
     }
 
     @Override
     public String toString() {
-        return "movie id : " + movie_id + "\t" + "review id : " + review_id;
+        return "movie id : " + movie_id + "\t" + "review id : " + review_id + "url : " + url;
     }
 }

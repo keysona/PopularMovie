@@ -67,4 +67,5 @@ public class Utility {
         Timber.tag("MovieInfo adapter").d("poster url : %s", url);
         return url;
     }
+
 }
