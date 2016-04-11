@@ -12,7 +12,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -32,20 +35,15 @@ import timber.log.Timber;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private MovieInfo movieInfo;
-
-    private ArrayList<MovieVideo> movieVideos;
-
-    private ArrayList<MovieReview> movieReviews;
-
-    private MovieReviewAdapter movieReviewAdapter;
-
-    private MovieVideoAdapter movieVideoAdapter;
-
     private static final int LOADER_VIDEOS = 0;
-
     private static final int LOADER_REVIEWS = 1;
-
+    private static final int HALF_STAR = 0;
+    private static final int FULL_STAR = 1;
+    private MovieInfo movieInfo;
+    private ArrayList<MovieVideo> movieVideos;
+    private ArrayList<MovieReview> movieReviews;
+    private MovieReviewAdapter movieReviewAdapter;
+    private MovieVideoAdapter movieVideoAdapter;
 
     @Nullable
     @Override
@@ -57,6 +55,29 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle bundle = getArguments();
         movieInfo = bundle.getParcelable("movie_info");
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
+        //titile text view
+        TextView titleTextView = (TextView) view.findViewById(R.id.title);
+        if (!MainActivity.mTwoPanel) {
+            titleTextView = (TextView) view.findViewById(R.id.title);
+            titleTextView.setVisibility(View.GONE);
+        } else {
+            titleTextView.setText(movieInfo.getOriginalTitle());
+        }
+
+        // handle stars
+        handleStars(view, movieInfo);
+        TextView voteAvgTextView = (TextView) view.findViewById(R.id.vote_average);
+        voteAvgTextView.setText("" + movieInfo.getVoteAverage());
+
+        //poster
+        ImageView posterImageView = (ImageView) view.findViewById(R.id.poster);
+        Picasso.with(getActivity()).load(movieInfo.getPosterPath()).into(posterImageView);
+
+        //date
+        TextView dateTextView = (TextView) view.findViewById(R.id.date);
+        dateTextView.setText(movieInfo.getReleaseDate());
+
         TextView overviewTextView = (TextView) view.findViewById(R.id.overview);
         overviewTextView.setText(movieInfo.getOverview());
 
@@ -92,7 +113,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onPause() {
         super.onPause();
         Timber.d("hello");
-        ((DetailActivity )getActivity()).saveLikeState();
+        ((DetailActivity) getActivity()).saveLikeState();
     }
 
     @Override
@@ -164,6 +185,40 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             case LOADER_REVIEWS:
                 movieReviews.clear();
                 movieReviewAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
+    private void handleStars(View view, MovieInfo movieInfo) {
+        ImageView[] stars = new ImageView[]{
+                (ImageView) view.findViewById(R.id.star_1),
+                (ImageView) view.findViewById(R.id.star_2),
+                (ImageView) view.findViewById(R.id.star_3),
+                (ImageView) view.findViewById(R.id.star_4),
+                (ImageView) view.findViewById(R.id.star_5)
+        };
+        double voteAverage = movieInfo.getVoteAverage();
+        int index = 0;
+        while (voteAverage >= 0 && index < 5) {
+            if (voteAverage - 2 >= 0) {
+                voteAverage -= 2;
+                selectStarIcon(stars[index], FULL_STAR);
+            } else if (voteAverage - 1 >= 0) {
+                voteAverage -= 1;
+                selectStarIcon(stars[index], HALF_STAR);
+            }
+            index++;
+        }
+
+    }
+
+    private void selectStarIcon(ImageView imageView, int starType) {
+        switch (starType) {
+            case HALF_STAR:
+                imageView.setImageResource(R.drawable.star_half);
+                break;
+            case FULL_STAR:
+                imageView.setImageResource(R.drawable.star_full);
                 break;
         }
     }

@@ -9,6 +9,8 @@ import keysona.com.movie.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static boolean mTwoPanel = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

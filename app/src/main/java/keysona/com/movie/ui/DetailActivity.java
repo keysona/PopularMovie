@@ -40,17 +40,19 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                changeFab(fab,false);
+
+                changeFab(fab, false, view);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        if (intent != null){
+        if (intent != null) {
             movieInfo = intent.getParcelableExtra("movie_info");
             getSupportActionBar().setTitle(movieInfo.getOriginalTitle());
-            ImageView posterImageView = (ImageView)findViewById(R.id.poster);
+            ImageView posterImageView = (ImageView) findViewById(R.id.poster);
             Picasso.with(this).load(movieInfo.getPosterPath()).into(posterImageView);
+
             Bundle bundle = new Bundle();
             bundle.putParcelable("movie_info", movieInfo);
             Fragment ff = new DetailFragment();
@@ -60,13 +62,13 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
                     .replace(R.id.detail_fragment_container, ff)
                     .commit();
             like = movieInfo.getLike();
-            changeFab(fab,true);
+            changeFab(fab, true, null);
         }
     }
 
-    private void changeFab(final FloatingActionButton fab,boolean init){
-        if(init){
-            switch(like){
+    private void changeFab(final FloatingActionButton fab, boolean init, View view) {
+        if (init) {
+            switch (like) {
                 case LIKE:
                     fab.setImageResource(R.drawable.like);
                     break;
@@ -76,26 +78,30 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
             }
             return;
         }
-        switch(like){
+        switch (like) {
             case LIKE:
                 fab.setImageResource(R.drawable.dislike);
                 like = DISLIKE;
                 movieInfo.setLike(like);
+                Snackbar.make(view, "Remove from your favourite", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
                 break;
             case DISLIKE:
                 fab.setImageResource(R.drawable.like);
                 like = LIKE;
                 movieInfo.setLike(like);
+                Snackbar.make(view, "Add your favourite", Snackbar.LENGTH_SHORT)
+                        .setAction("Action", null).show();
                 break;
         }
     }
 
     @Override
     public void saveLikeState() {
-        if(movieInfo != null){
+        if (movieInfo != null) {
             getContentResolver().update(MovieContract.MovieInfoEntry.CONTENT_URI,
                     movieInfo.toContentValues(),
-                    "movie_id = ?", new String[]{""+movieInfo.getMovieId()});
+                    "movie_id = ?", new String[]{"" + movieInfo.getMovieId()});
             movieInfo.setLike(like);
         }
     }

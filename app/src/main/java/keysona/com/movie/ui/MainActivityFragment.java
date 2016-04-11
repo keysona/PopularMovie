@@ -21,8 +21,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import keysona.com.movie.adapter.MovieAdapter;
 import keysona.com.movie.R;
+import keysona.com.movie.adapter.MovieAdapter;
 import keysona.com.movie.data.Config;
 import keysona.com.movie.data.MovieContract;
 import keysona.com.movie.data.MovieInfo;
@@ -34,29 +34,18 @@ import timber.log.Timber;
  */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static MovieAdapter movieAdapter;
-
-    public static ArrayList<MovieInfo> movies;
-
     private static final String POSTER_SIZE = "poster_size";
-
-    private int screenWidth;
-
-    private String posterSize;
-
-    private static String TAG = "MainActivityFragment";
-
     private static final int testMovieId = 118340;
-
     private static final String SORT_TYPE = "sort";
-
     private static final String SORT_TYPE_POPULAR = "popular";
-
     private static final String SORT_TYPE_TOP_RATED = "top_rated";
-
     private static final String SORT_TYPE_LIKE = "like";
-
     private static final int LOADER_ID = 0;
+    public static MovieAdapter movieAdapter;
+    public static ArrayList<MovieInfo> movies;
+    private static String TAG = "MainActivityFragment";
+    private int screenWidth;
+    private String posterSize;
 
     public MainActivityFragment() {
     }
@@ -172,13 +161,13 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         switch(sortType){
             case SORT_TYPE_TOP_RATED:
-                sortOrder = MovieContract.MovieInfoEntry.COLUMN_VOTE_AVERAGE + " ASC";
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_VOTE_AVERAGE + " DESC";
                 break;
             case SORT_TYPE_LIKE:
-                sortOrder = MovieContract.MovieInfoEntry.COLUMN_LIKE + " ASC";
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_LIKE + " DESC";
                 break;
             case SORT_TYPE_POPULAR:
-                sortOrder = MovieContract.MovieInfoEntry.COLUMN_POPULARITY + " ASC";
+                sortOrder = MovieContract.MovieInfoEntry.COLUMN_POPULARITY + " DESC";
                 break;
         }
 

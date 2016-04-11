@@ -3,12 +3,12 @@ package keysona.com.movie.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -45,6 +45,7 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<MovieVideoAdapter.Mo
         final String videoImage = movieVideo.buildVideoUrl();
         Timber.d("movieVideo : " + videoImage);
         Picasso.with(mContext).load(videoImage).into(holder.videoImageView);
+        holder.videoNameTextView.setText(movieVideo.getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,11 +63,11 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<MovieVideoAdapter.Mo
 
     public static class MovieVideoViewHolder extends RecyclerView.ViewHolder {
         ImageView videoImageView;
-
+        TextView videoNameTextView;
         public MovieVideoViewHolder(View itemView) {
             super(itemView);
             videoImageView = (ImageView) itemView.findViewById(R.id.video_image);
-
+            videoNameTextView = (TextView) itemView.findViewById(R.id.video_name);
         }
     }
 }

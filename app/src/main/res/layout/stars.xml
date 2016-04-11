@@ -1,5 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/star_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/star_empty" />
+
+    <ImageView
+        android:id="@+id/star_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/star_1"
+        android:src="@drawable/star_empty" />
+
+    <ImageView
+        android:id="@+id/star_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/star_2"
+        android:src="@drawable/star_empty" />
+
+    <ImageView
+        android:id="@+id/star_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/star_3"
+        android:src="@drawable/star_empty" />
+
+    <ImageView
+        android:id="@+id/star_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/star_4"
+        android:src="@drawable/star_empty" />
+
+    <TextView
+        android:id="@+id/vote_average"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/star_5"
+        android:paddingLeft="@dimen/padding_middle"
+        android:textSize="22sp" />
 
 </RelativeLayout>

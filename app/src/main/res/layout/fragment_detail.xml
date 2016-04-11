@@ -1,10 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/padding_large">
+    android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/margin_large"
+        card_view:cardElevation="@dimen/card_view_elevation">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:padding="@dimen/padding_large"
+            android:textColor="#ffffff"
+            android:textSize="26sp" />
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/margin_large">
+
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_large"
+            card_view:cardElevation="@dimen/card_view_elevation">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/poster"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="@dimen/margin_large" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/poster"
+                    android:text="dsfjklsdjlfjdslkf"
+                    android:textSize="30sp" />
+
+                <include
+                    layout="@layout/stars"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/date"
+                    android:layout_toRightOf="@+id/poster" />
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,16 +70,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_small">
+            android:layout_marginLeft="@dimen/margin_middle"
+            android:orientation="vertical">
            <TextView
                style="@style/DetailTitle"
                android:text="@string/detail_title_overview"/>
            <TextView
                android:id="@+id/overview"
                android:layout_width="match_parent"
-               android:paddingLeft="@dimen/padding_middle"
-               android:layout_height="wrap_content" />
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="@dimen/margin_middle"
+               android:textSize="18sp" />
+
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -30,20 +89,21 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardElevation="@dimen/card_view_elevation"
-        android:layout_marginTop="@dimen/margin_large">
+        android:layout_marginTop="@dimen/margin_large"
+        card_view:cardElevation="@dimen/card_view_elevation">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_middle"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/padding_small">
+            android:paddingRight="@dimen/padding_large">
             <TextView
                 style="@style/DetailTitle"
                 android:text="@string/detail_title_trailers"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/trailers"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
@@ -51,13 +111,13 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardElevation="@dimen/card_view_elevation"
-        android:layout_marginTop="@dimen/margin_large">
+        android:layout_marginTop="@dimen/margin_large"
+        card_view:cardElevation="@dimen/card_view_elevation">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/padding_small">
+            android:layout_marginLeft="@dimen/margin_middle"
+            android:orientation="vertical">
             <TextView
                 style="@style/DetailTitle"
                 android:text="@string/detail_title_review"/>
@@ -67,5 +127,6 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
+    </LinearLayout>
 
 </LinearLayout>
