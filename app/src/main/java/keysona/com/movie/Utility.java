@@ -14,6 +14,8 @@ public class Utility {
 
     public static final String VIDEOS_INFO_MOVIE = "videos";
 
+    public static final String MOVIE_INFO = "";
+
     public static String getMoviesUrl(String sortType) {
             /*
             * example : http://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]
@@ -42,15 +44,22 @@ public class Utility {
         return url;
     }
 
+    public static String getMovieInfoUrl(int id){
+        String url = buildMovieInfoUrl(id,MOVIE_INFO);
+        Timber.d("movie info url : " + url);
+        return url;
+    }
+
     private static String buildMovieInfoUrl(int id, String type) {
-        return new Uri.Builder()
+        Uri.Builder builder =  new Uri.Builder()
                 .scheme("http")
                 .authority(Config.MOVIE_WEBSITE)
                 .appendPath("3")
                 .appendPath("movie")
-                .appendPath("" + id)
-                .appendPath(type)
-                .appendQueryParameter("api_key", Config.API_KEY)
+                .appendPath("" + id);
+        if(type != MOVIE_INFO)
+            builder.appendPath(type);
+        return builder.appendQueryParameter("api_key", Config.API_KEY)
                 .build().toString();
     }
 
@@ -67,5 +76,4 @@ public class Utility {
         Timber.tag("MovieInfo adapter").d("poster url : %s", url);
         return url;
     }
-
 }

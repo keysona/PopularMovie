@@ -54,6 +54,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         Bundle bundle = getArguments();
         movieInfo = bundle.getParcelable("movie_info");
+
+        new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_INFO,movieInfo.getMovieId());
+
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         //titile text view
