@@ -1,6 +1,6 @@
 package keysona.com.movie.ui;
 
-import android.app.Fragment;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +19,12 @@ import keysona.com.movie.data.MovieInfo;
 
 public class DetailActivity extends AppCompatActivity implements DetailFragment.saveLikeState {
 
+    // like
     private static final int LIKE = 1;
-
     private static final int DISLIKE = 0;
-
     private int like;
 
+    // movie data
     private MovieInfo movieInfo;
 
     @Override
@@ -55,7 +55,7 @@ public class DetailActivity extends AppCompatActivity implements DetailFragment.
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("movie_info", movieInfo);
-            Fragment ff = new DetailFragment();
+            DetailFragment ff = new DetailFragment();
             ff.setArguments(bundle);
             getFragmentManager()
                     .beginTransaction()

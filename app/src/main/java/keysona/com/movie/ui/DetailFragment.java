@@ -3,13 +3,19 @@ package keysona.com.movie.ui;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,19 +41,37 @@ import timber.log.Timber;
  */
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    // loader id
     private static final int LOADER_VIDEOS = 0;
     private static final int LOADER_REVIEWS = 1;
+
+    // star
     private static final int HALF_STAR = 0;
     private static final int FULL_STAR = 1;
+
+    // movie data
     private MovieInfo movieInfo;
     private ArrayList<MovieVideo> movieVideos;
     private ArrayList<MovieReview> movieReviews;
     private MovieReviewAdapter movieReviewAdapter;
     private MovieVideoAdapter movieVideoAdapter;
 
+    private ShareActionProvider mShareActionProvider;
+
+    public static DetailFragment newInstance(MovieInfo movieInfo) {
+        Bundle args = new Bundle();
+        args.putParcelable("movie_info", movieInfo);
+        DetailFragment fragment = new DetailFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
 
         movieVideos = new ArrayList<MovieVideo>();
         movieReviews = new ArrayList<MovieReview>();
@@ -55,17 +79,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         Bundle bundle = getArguments();
         movieInfo = bundle.getParcelable("movie_info");
 
-        new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_INFO,movieInfo.getMovieId());
-
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
 
         //titile text view
         TextView titleTextView = (TextView) view.findViewById(R.id.title);
-        if (!MainActivity.mTwoPanel) {
+        if (MainActivity.mTwoPanel) {
             titleTextView = (TextView) view.findViewById(R.id.title);
-            titleTextView.setVisibility(View.GONE);
-        } else {
             titleTextView.setText(movieInfo.getOriginalTitle());
+        } else {
+            titleTextView.setVisibility(View.GONE);
+            new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_IMAGE, movieInfo.getMovieId());
         }
 
         // handle stars
@@ -108,6 +131,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onActivityCreated(savedInstanceState);
         new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_REVIEW, movieInfo.getMovieId());
         new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_VIDEO, movieInfo.getMovieId());
+        new FetchDataTask(getActivity()).execute(FetchDataTask.MOVIE_INFO, movieInfo.getMovieId());
         getLoaderManager().initLoader(LOADER_VIDEOS, null, this);
         getLoaderManager().initLoader(LOADER_REVIEWS, null, this);
     }
@@ -115,8 +139,36 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onPause() {
         super.onPause();
-        Timber.d("hello");
-        ((DetailActivity) getActivity()).saveLikeState();
+        Timber.d("DetailFragment : onPause()");
+        if (MainActivity.mTwoPanel) {
+            ((MainActivity) getActivity()).saveLikeState();
+        } else {
+            ((DetailActivity) getActivity()).saveLikeState();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_detail, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_share);
+
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+        if (movieInfo != null && mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(createShareMovieIntent());
+        }
+
+        if (mShareActionProvider == null) {
+            Timber.d("mShareActionProvider is null");
+        }
+    }
+
+    private Intent createShareMovieIntent() {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, movieInfo.getOriginalTitle());
+        return shareIntent;
     }
 
     @Override
@@ -226,6 +278,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         }
     }
 
+    // call back for activity to notify floating action button change.
     interface saveLikeState {
         public void saveLikeState();
     }

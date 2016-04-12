@@ -16,6 +16,8 @@ public class Utility {
 
     public static final String MOVIE_INFO = "";
 
+    public static final String MOVIE_IMAGE = "movies";
+
     public static String getMoviesUrl(String sortType) {
             /*
             * example : http://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]
@@ -50,6 +52,12 @@ public class Utility {
         return url;
     }
 
+    public static String getMovieImage(int id){
+        String url = buildMovieInfoUrl(id,MOVIE_IMAGE);
+        Timber.d("movie images :" + url);
+        return url;
+    }
+
     private static String buildMovieInfoUrl(int id, String type) {
         Uri.Builder builder =  new Uri.Builder()
                 .scheme("http")
@@ -57,8 +65,10 @@ public class Utility {
                 .appendPath("3")
                 .appendPath("movie")
                 .appendPath("" + id);
-        if(type != MOVIE_INFO)
+        if(type != MOVIE_INFO && type != MOVIE_IMAGE)
             builder.appendPath(type);
+        else if(type == MOVIE_IMAGE)
+            builder.appendPath("images");
         return builder.appendQueryParameter("api_key", Config.API_KEY)
                 .build().toString();
     }

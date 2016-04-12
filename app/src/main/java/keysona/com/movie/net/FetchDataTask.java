@@ -8,7 +8,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,12 +23,13 @@ import java.util.Set;
 import keysona.com.movie.R;
 import keysona.com.movie.Utility;
 import keysona.com.movie.data.MovieContract;
+import keysona.com.movie.ui.MainActivityFragment;
 import timber.log.Timber;
 
 /**
  * Created by key on 16-4-6.
  */
-public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
+public class FetchDataTask extends AsyncTask<Integer, Void, String> {
 
     private Context mContext;
 
@@ -36,6 +40,8 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
     public static final int MOVIE_VIDEO = 2;
 
     public static final int MOVIE_INFO = 3;
+
+    public static final int MOVIE_IMAGE = 4;
 
     public static final String TAG = "FetchTask";
 
@@ -104,7 +110,7 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected String doInBackground(Integer... params) {
         String url;
         String jsonData;
         int movieId;
@@ -113,19 +119,16 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             case MOVIE_LIST:
                 url = Utility.getMoviesUrl(getMovieSortType());
                 jsonData = NetworkConnector.get(url);
-                Timber.tag(TAG).d("save data : " + jsonData);
                 saveMoviesInfoFromJson(jsonData);
                 break;
             case MOVIE_REVIEW:
                 movieId = params[1].intValue();
-                Timber.tag(TAG).d("movie id : " + movieId);
                 url = Utility.getMovieReviewUrl(movieId);
                 jsonData = NetworkConnector.get(url);
                 saveMovieReviewsFromJsons(jsonData, movieId);
                 break;
             case MOVIE_VIDEO:
                 movieId = params[1].intValue();
-                Timber.tag(TAG).d("movie id : " + movieId);
                 url = Utility.getMovieVideoUrl(movieId);
                 jsonData = NetworkConnector.get(url);
                 saveMovieVideosFromJsons(jsonData, movieId);
@@ -133,16 +136,25 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
 
             case MOVIE_INFO:
                 movieId = params[1].intValue();
-                return getMovieRuntime(movieId);
+                return "" + getMovieRuntime(movieId);
+
+            case MOVIE_IMAGE:
+                movieId = params[1].intValue();
+                return getMovieImage(movieId);
         }
         return null;
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
-        if (integer != null) {
+    protected void onPostExecute(String data) {
+        if (data != null && data.contains("http")) {
+            ImageView imageView = (ImageView) ((Activity) mContext).findViewById(R.id.poster);
+            Picasso.with(mContext).load(data).into(imageView);
+        } else if (data != null) {
             TextView runtimeTextView = (TextView) ((Activity) mContext).findViewById(R.id.runtime);
-            runtimeTextView.setText("" + integer + " Min");
+            if(runtimeTextView != null){
+                runtimeTextView.setText(data + " Min");
+            }
         }
     }
 
@@ -154,9 +166,7 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             for (int i = 0; i < moviesInfoJsonArray.length(); i++) {
                 JSONObject movieInfoJson = moviesInfoJsonArray.getJSONObject(i);
                 movies[i] = makeMovieInfoContentValue(movieInfoJson);
-                Timber.tag(TAG).d("MovieInfo - ContentValue : " + formatContentValues(movies[i]));
             }
-            Timber.tag(TAG).d("MovieInfo - JSONArray length : " + moviesInfoJsonArray.length());
             ContentResolver provider = mContext.getContentResolver();
             provider.bulkInsert(MovieContract.MovieInfoEntry.CONTENT_URI, movies);
             Cursor cursor = provider.query(MovieContract.MovieInfoEntry.CONTENT_URI, COLS_MOVIE_INFO, null, null, null);
@@ -172,7 +182,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
                 sb.append(cursor.getInt(MOVIE_INFO_COL_VOTE_COUNT) + "\t");
                 sb.append(cursor.getString(MOVIE_INFO_COL_RELEASE_DATE) + "\t");
                 sb.append(cursor.getInt(MOVIE_INFO_COL_LIKE) + "\t");
-                Timber.tag(TAG).d("MovieInfo cursor data : " + sb.toString());
             }
             cursor.close();
         } catch (JSONException e) {
@@ -187,12 +196,10 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             if (temp.getInt("total_results") == 0)
                 return;
             JSONArray reviewsJsonArray = temp.getJSONArray("results");
-            Timber.tag(TAG).d("json array length : " + reviewsJsonArray.length());
             ContentValues[] reviews = new ContentValues[reviewsJsonArray.length()];
             for (int i = 0; i < reviewsJsonArray.length(); i++) {
                 JSONObject reviewJson = reviewsJsonArray.getJSONObject(i);
                 reviews[i] = makeMovieReviewContentValue(reviewJson, movieId);
-                Timber.tag(TAG).d("MovieReview - ContentValue : " + formatContentValues(reviews[i]));
             }
             ContentResolver provider = mContext.getContentResolver();
             provider.bulkInsert(MovieContract.MovieReviewEntry.CONTENT_URI, reviews);
@@ -204,7 +211,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
                 sb.append(cursor.getString(MOVIE_REVIEW_COL_MOVIE_ID) + "\t");
                 sb.append(cursor.getString(MOVIE_REVIEW_CONTENT) + "\t");
                 sb.append(cursor.getString(MOVIE_REVIEW_URL));
-                Timber.tag(TAG).d("MovieReview cursor data : " + sb.toString());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -222,20 +228,17 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             for (int i = 0; i < videosJsonArray.length(); i++) {
                 JSONObject reviewJson = videosJsonArray.getJSONObject(i);
                 videos[i] = makeMovieVideoContentValue(reviewJson, movieId);
-                Timber.tag(TAG).d("MovieVideos - ContentValues : " + formatContentValues(videos[i]));
             }
             ContentResolver provider = mContext.getContentResolver();
             provider.bulkInsert(MovieContract.MovieVideoEntry.CONTENT_URI, videos);
         } catch (JSONException e) {
             e.printStackTrace();
-            Timber.tag(TAG).e("json error : " + e.toString());
         }
     }
 
     private void testMovieInfoInsert() {
         ContentResolver provider = mContext.getContentResolver();
         Cursor cursor = provider.query(MovieContract.MovieInfoEntry.CONTENT_URI, COLS_MOVIE_INFO, null, null, null);
-        Timber.d("total record : " + cursor.getCount());
         while (cursor.moveToNext()) {
             StringBuilder sb = new StringBuilder();
             sb.append(cursor.getInt(MOVIE_INFO_COL_MOVIE_ID) + "\t");
@@ -262,7 +265,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             sb.append(cursor.getString(MOVIE_REVIEW_COL_MOVIE_ID) + "\t");
             sb.append(cursor.getString(MOVIE_REVIEW_CONTENT) + "\t");
             sb.append(cursor.getString(MOVIE_REVIEW_URL));
-            Timber.tag(TAG).d("MovieReview cursor data : " + sb.toString());
         }
         cursor.close();
     }
@@ -281,7 +283,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             sb.append(c.getInt(MOVIE_VIDEO_COL_SIZE) + "\t");
             sb.append(c.getString(MOVIE_VIDEO_COL_TYPE) + "\t");
             sb.append(c.getString(MOVIE_VIDEO_COL_ISO_639_1) + "\t");
-            Timber.tag(TAG).d("MovieVideo cursor data : " + sb.toString());
         }
         c.close();
     }
@@ -344,7 +345,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
         String sortType = sharedPreferences.getString(mContext.getString(R.string.pref_sort_key)
                 , mContext.getString(R.string.pref_sort_default));
 
-        Timber.d("movie sort type : " + sortType);
         return sortType;
     }
 
@@ -355,7 +355,6 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
             String columnName = entry.getKey();
             res.append(columnName + " : " + entry.getValue() + "\t");
         }
-        Timber.tag(TAG).d("result str : " + res.toString());
         return res.toString();
     }
 
@@ -367,11 +366,27 @@ public class FetchDataTask extends AsyncTask<Integer, Void, Integer> {
         try {
             JSONObject temp = new JSONObject(data);
             runtime = temp.getInt("runtime");
-            Timber.d("runtime : " + runtime);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return runtime;
+    }
+
+    private String getMovieImage(int movieId) {
+        String url = Utility.getMovieImage(movieId);
+        String data = NetworkConnector.get(url);
+        try {
+            JSONObject temp = new JSONObject(data);
+            JSONArray backdrops = temp.getJSONArray("backdrops");
+            if (backdrops.length() > 0) {
+                String imagePath = backdrops.getJSONObject(0).getString("file_path");
+                String imageUrl = Utility.buildImageUrl(imagePath, MainActivityFragment.posterSize);
+                return imageUrl;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

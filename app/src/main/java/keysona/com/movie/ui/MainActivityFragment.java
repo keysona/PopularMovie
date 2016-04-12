@@ -29,13 +29,9 @@ import keysona.com.movie.data.MovieInfo;
 import keysona.com.movie.net.FetchDataTask;
 import timber.log.Timber;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String POSTER_SIZE = "poster_size";
-    private static final int testMovieId = 118340;
     private static final String SORT_TYPE = "sort";
     private static final String SORT_TYPE_POPULAR = "popular";
     private static final String SORT_TYPE_TOP_RATED = "top_rated";
@@ -45,19 +41,11 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
     public static ArrayList<MovieInfo> movies;
     private static String TAG = "MainActivityFragment";
     private int screenWidth;
-    private String posterSize;
+    public static String posterSize;
+
+    RecyclerView recyclerView;
 
     public MainActivityFragment() {
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Bundle bundle = new Bundle();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String sortType = pref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-        bundle.putString(SORT_TYPE,sortType);
-        getLoaderManager().initLoader(LOADER_ID, bundle, this);
     }
 
     @Override
@@ -80,19 +68,28 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
         sharedPreferences.edit()
                 .putString(POSTER_SIZE, posterSize)
                 .commit();
-        Timber.tag(TAG).d("save poster size in prefs");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
 
-        //calculate span count in run time.
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // get spanCount
         int spanCount = getSpanCount(posterSize, screenWidth);
+        if(MainActivity.mTwoPanel){
+            spanCount = 3;
+            Timber.d("mTwoPanel : " + spanCount);
+        }
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), spanCount);
         Timber.tag(TAG).d("spanCount : " + spanCount);
         movies = new ArrayList<MovieInfo>();
@@ -100,7 +97,12 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(movieAdapter);
-        return view;
+
+        Bundle bundle = new Bundle();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String sortType = pref.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
+        bundle.putString(SORT_TYPE,sortType);
+        getLoaderManager().initLoader(LOADER_ID, bundle, this);
     }
 
     @Override
@@ -191,15 +193,21 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
             temp.setPosterPath(temp.buildImageUrl(posterSize));
             movies.add(temp);
         }
-
-        Timber.d("movies List:" + movies.size());
-        Timber.d("movies Cursor data : " + data.getCount());
         movieAdapter.notifyDataSetChanged();
+
+        if(MainActivity.mTwoPanel && getActivity().getFragmentManager().findFragmentByTag("detail") == null){
+            ((MainActivity) getActivity()).onItemSelected(movies.get(1));
+        }
+
     }
 
     @Override
     public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
         movies.clear();
         movieAdapter.notifyDataSetChanged();
+    }
+
+    public interface Callback{
+        void onItemSelected(MovieInfo movieInfo);
     }
 }
