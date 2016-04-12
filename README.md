@@ -15,6 +15,7 @@ Add your API key in gradle.gradle<app> defaultConfig "TMDB_API_KEY"
 
 ![tablet](./example/tablet.png)
 
+
 ## State 1
 **Finish**
 
